@@ -11,7 +11,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git 'https://github.com/Lofty900/Azure-Policy-Assignment-.git'
+        git 'https://github.com/Lofty900/policy.git'
       }
     }
 
