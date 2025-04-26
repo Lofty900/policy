@@ -11,7 +11,8 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git 'https://github.com/Lofty900/policy.git'
+        git branch: 'main', url: 'https://github.com/Lofty900/policy.git'
+
       }
     }
 
