@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  parameters {
+    choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select Terraform action')
+  }
+
   environment {
     ARM_CLIENT_ID       = credentials('azure-client-id')
     ARM_CLIENT_SECRET   = credentials('azure-client-secret')
@@ -12,7 +16,6 @@ pipeline {
     stage('Checkout') {
       steps {
         git branch: 'main', url: 'https://github.com/Lofty900/policy.git'
-
       }
     }
 
@@ -24,11 +27,23 @@ pipeline {
 
     stage('Terraform Plan') {
       steps {
-        sh 'terraform plan -out=tfplan'
+        sh "terraform plan -out=tfplan ${params.ACTION == 'destroy' ? '-destroy' : ''}"
       }
     }
 
     stage('Terraform Apply') {
+      when {
+        expression { params.ACTION == 'apply' }
+      }
+      steps {
+        sh 'terraform apply -auto-approve tfplan'
+      }
+    }
+
+    stage('Terraform Destroy') {
+      when {
+        expression { params.ACTION == 'destroy' }
+      }
       steps {
         sh 'terraform apply -auto-approve tfplan'
       }
